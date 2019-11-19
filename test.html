@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script>
+        var socket;
+        function setup(){
+            var txtField = document.getElementById('txt')
+            try {
+                socket = new WebSocket('ws://localhost:29031');
+            } catch (error) {
+                var p = document.createElement('p')
+                p.innerText = "error" + JSON.stringify({error})
+                txtField.appendChild(p)
+            }
+            
+
+            socket.addEventListener('open', function (event) {
+                socket.send('Hello Server!');
+            });
+
+            socket.addEventListener('error', function (event) {
+                var p = document.createElement('p')
+                p.innerText = "error" + JSON.stringify({event})
+                txtField.appendChild(p)
+            });
+
+            // Listen for messages
+            socket.addEventListener('message', function (event) {
+                console.log('Message from server ', event.data);
+                var p = document.createElement('p')
+                p.innerText = event.data
+                txtField.appendChild(p)
+            });
+        }
+        function send(){
+            var value = document.getElementById("input").value
+            socket && socket.send(value)
+        }
+    </script>
+</head>
+<body>
+    <div id="txt"></div>
+    <input id="input"> <button onclick="send()">send</button>
+    <script>
+        setup()
+    </script>
+</body>
+</html>
